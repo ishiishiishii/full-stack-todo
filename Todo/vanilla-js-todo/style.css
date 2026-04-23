@@ -140,3 +140,21 @@ main {
     margin: 12px 0;
     color: #6b7280;
 }
+
+@media (max-width: 520px) {
+    /*縦に入力ボタンと追加ボタンを並べる*/
+    #input {
+        width: 100%;
+    }
+
+    #btn {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 8px;
+    }
+
+    /*フィルタは折り返しOKにする*/
+    .filtes {
+        flex-wrap: wrap;
+    }
+}

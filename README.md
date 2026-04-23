@@ -5,7 +5,9 @@
 
 ## Demo
 - **URL**: （デプロイしたらここに貼る）
-- **Screenshots / GIF**: （後で追加）
+
+### Screenshot
+![Todo app](assets/appimage.png)
 
 ## What I built (機能)
 ### Core

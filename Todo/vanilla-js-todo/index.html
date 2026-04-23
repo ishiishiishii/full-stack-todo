@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <title>ToDoアプリ</title>
+        <meta name="description" content="このアプリはタスクを管理するアプリです。">
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="style.css">
+        <script src="js/todos.js" defer></script>
+    </head>
+    <body>
+        <main>
+            <input id="input">
+            <button id="btn">追加</button>
+            <!--完了数表示-->
+            <div class="toolbar">
+                <span id="count"></span>
+                <button id="clearDoneBtn" type="button">完了したタスクを削除</button>
+            </div>
+
+            <!--フィルター-->
+            <div class="filters">
+                <button type="button" data-filter="all" aria-pressed="true">全て</button>
+                <button type="button" data-filter="active" aria-pressed="false">未完了</button>
+                <button type="button" data-filter="done" aria-pressed="false">完了</button>
+            </div>
+
+
+            <p id="emptyMessage">タスクがありません。追加してみましょう。</p>
+            <ul id="list"></ul>
+        </main>
+    </body>
+</html>

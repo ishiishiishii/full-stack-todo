@@ -1,0 +1,142 @@
+* { box-sizing: border-box;}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background-color: #f6f7fb;
+    color: #111827;
+}
+
+main {
+    max-width: 720px;
+    margin: 48px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+}
+
+#input {
+    width: min(500px, 100%);
+    height: 40px;
+    padding: 10px, 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10pxl;
+    outline: none;
+}
+
+#input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+#btn {
+    margin-left: 8px;
+    padding: 10px 14px;
+    border: 1px solid #4f46e5;
+    border-radius: 10px;
+    background-color: #4f46e5;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+#btn:hover {
+    background-color: #4338ca;
+}
+
+#list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    border-top: 1px solid #eef2f7;
+}
+
+#list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 6px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+#list li:hover {
+    background-color: #fafafa;
+}
+
+#list input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+#list button {
+    margin-left: auto;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+#list button:hover {
+    border-color: #d1d5db;
+    background-color: #f9fafb;
+}
+
+.filters {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.todo-text.done {
+    text-decoration: line-through;
+    opacity: 0.65;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 12px 0;
+}
+
+#count {
+    color: #6b7280;
+}
+
+#clearDoneBtn {
+    margin-left: auto;
+    padding: 8px 10px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background-color: #fff1f2;
+    color: #991b1b;
+    cursor: pointer;
+}
+
+#clearDoneBtn:hover {
+    background-color: #ffe4e6;
+}
+
+.filters button {
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background-color: #f9fafb;
+}
+
+.filters button[aria-pressed="true"] {
+    border-color: #4f46e5;;
+    background-color: rgba(79, 70, 229, 0.12);
+}
+
+#emptyMessage {
+    margin: 12px 0;
+    color: #6b7280;
+}

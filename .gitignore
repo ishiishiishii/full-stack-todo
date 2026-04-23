@@ -1,0 +1,17 @@
+# Node (backend)
+backend/node_modules/
+backend/npm-debug.log*
+backend/yarn-debug.log*
+backend/yarn-error.log*
+
+# SQLite DB files (local data)
+backend/*.db
+backend/*.db-journal
+backend/*.db-wal
+backend/*.db-shm
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+

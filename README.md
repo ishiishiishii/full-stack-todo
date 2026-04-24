@@ -4,7 +4,7 @@
 フロントは `fetch` でAPIを呼び出し、サーバ（DB）を正（source of truth）としてCRUDを行います。
 
 ## Demo
-- **URL**: （デプロイしたらここに貼る）
+- **URL**: `https://full-stack-todo-7aw9.onrender.com/`
 
 ### Screenshot
 ![Todo app](assets/appimage.png)

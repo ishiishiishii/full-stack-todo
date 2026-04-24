@@ -20,6 +20,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const path = require("path");
+
+app.use("/", express.static(path.join(__dirname, "..", "Todo", "vanilla-js-todo")));
+
+
 
 app.get("/todos", (req, res) => {
     const rows = db.prepare("SELECT id, text, done FROM todos").all();
@@ -93,7 +98,7 @@ app.get("/health", (req, res) => {
     res.json({ ok: true});
 });
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
-    console.log(`API server listening on http://localhost:${port}`);
+    console.log(`API server listening on port ${port}`);
 });

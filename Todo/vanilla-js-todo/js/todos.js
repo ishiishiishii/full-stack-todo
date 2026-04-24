@@ -1,11 +1,13 @@
+const API_BASE = "";
+
 async function fetchTodos() {
-    const res = await fetch("http://localhost:3001/todos");
+    const res = await fetch(`${API_BASE}/todos`);
     const data = await res.json();
     return data;
 }
 
 async function createTodo(text) {
-    const res = await fetch("http://localhost:3001/todos", {
+    const res = await fetch(`${API_BASE}/todos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -21,7 +23,7 @@ async function createTodo(text) {
 }
 
 async function deleteTodoApi(id) {
-    const res = await fetch(`http://localhost:3001/todos/${id}`, {
+    const res = await fetch(`${API_BASE}/todos/${id}`, {
         method: "DELETE",
     });
 
@@ -31,7 +33,7 @@ async function deleteTodoApi(id) {
 }
 
 async function toggleDoneApi(id) {
-    const res = await fetch(`http://localhost:3001/todos/${id}`, {
+    const res = await fetch(`${API_BASE}/todos/${id}`, {
         method: "PATCH",
     });
 

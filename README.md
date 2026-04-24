@@ -7,7 +7,7 @@
 - **URL**: `https://full-stack-todo-7aw9.onrender.com/`
 
 ### Screenshot
-![Todo app](assets/appimage.png)
+![Todo app](assets/app-image.png)
 
 ## What I built (機能)
 ### Core

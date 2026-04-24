@@ -22,8 +22,16 @@ app.use(cors());
 
 const path = require("path");
 
-app.use("/", express.static(path.join(__dirname, "..", "Todo", "vanilla-js-todo")));
+const frontendDir = path.join(__dirname, "..", "Todo", "vanilla-js-todo");
+console.log("Serving frontend from:", frontendDir);
 
+// 静的ファイル配信（index.html / style.css / js/todos.js）
+app.use(express.static(frontendDir));
+
+// / は必ず index.html を返す
+app.get("/", (req, res) => {
+  res.sendFile(path.join(frontendDir, "index.html"));
+});
 
 
 app.get("/todos", (req, res) => {

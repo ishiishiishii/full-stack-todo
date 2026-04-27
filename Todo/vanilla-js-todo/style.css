@@ -20,9 +20,9 @@ main {
 #input {
     width: min(500px, 100%);
     height: 40px;
-    padding: 10px, 12px;
+    padding: 10px 12px;
     border: 1px solid #d1d5db;
-    border-radius: 10pxl;
+    border-radius: 10px;
     outline: none;
 }
 
@@ -132,7 +132,7 @@ main {
 }
 
 .filters button[aria-pressed="true"] {
-    border-color: #4f46e5;;
+    border-color: #4f46e5;
     background-color: rgba(79, 70, 229, 0.12);
 }
 
@@ -154,7 +154,7 @@ main {
     }
 
     /*フィルタは折り返しOKにする*/
-    .filtes {
+    .filters {
         flex-wrap: wrap;
     }
 }

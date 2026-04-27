@@ -15,6 +15,9 @@ backend/*.db-shm
 Thumbs.db
 .vscode/
 
+# Local docs (do not publish)
+docs/
+
 # Keep portfolio repo clean (exclude unrelated practice folders/files)
 CSS/
 kadai_008/

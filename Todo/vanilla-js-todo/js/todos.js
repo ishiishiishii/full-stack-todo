@@ -143,8 +143,6 @@ const clearDoneBtn = document.querySelector("#clearDoneBtn");
 const notifyBtn = document.querySelector("#notifyBtn");
 const recurringBtn = document.querySelector("#recurringBtn");
 const searchInput = document.querySelector("#searchInput");
-const exportBtn = document.querySelector("#exportBtn");
-const importFile = document.querySelector("#importFile");
 
 const authSlot = document.querySelector("#authSlot");
 const appStatus = document.querySelector("#appStatus");
@@ -1093,65 +1091,6 @@ if (notifyBtn) {
 
 if (recurringBtn) {
     recurringBtn.addEventListener("click", openRecurringModal);
-}
-
-function downloadJson(filename, obj) {
-    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-}
-
-if (exportBtn) {
-    exportBtn.addEventListener("click", () => {
-        if (!me) {
-            setAppStatus("ログインが必要です。");
-            return;
-        }
-        const payload = {
-            exportedAt: new Date().toISOString(),
-            version: 1,
-            todos,
-        };
-        downloadJson("todos-export.json", payload);
-        setAppStatus("エクスポートしました。");
-    });
-}
-
-if (importFile) {
-    importFile.addEventListener("change", async () => {
-        if (!me) {
-            setAppStatus("ログインが必要です。");
-            return;
-        }
-        const file = importFile.files?.[0];
-        if (!file) return;
-        try {
-            const text = await file.text();
-            const parsed = JSON.parse(text);
-            const items = Array.isArray(parsed?.todos) ? parsed.todos : Array.isArray(parsed) ? parsed : [];
-            const cleaned = items.map((t) => ({
-                text: t?.text,
-                dueAt: t?.dueAt ?? null,
-                endTime: t?.endTime ?? null,
-                location: t?.location ?? null,
-                category: t?.category ?? null,
-            }));
-            await bulkCreateTodosApi(cleaned);
-            todos = await fetchTodos();
-            render();
-            setAppStatus(`インポートしました（${cleaned.length}件）`);
-        } catch (e) {
-            setAppStatus(`インポートに失敗: ${String(e.message ?? e)}`);
-        } finally {
-            importFile.value = "";
-        }
-    });
 }
 
 if (recurringOverlay) {

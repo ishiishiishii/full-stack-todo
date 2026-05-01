@@ -553,36 +553,6 @@ main {
     background-color: #f9fafb;
 }
 
-#exportBtn {
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background-color: #ffffff;
-    color: #111827;
-    cursor: pointer;
-}
-
-#exportBtn:hover {
-    background-color: #f9fafb;
-}
-
-.import-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    background-color: #ffffff;
-    color: #111827;
-    cursor: pointer;
-    user-select: none;
-}
-
-.import-label:hover {
-    background-color: #f9fafb;
-}
-
 #clearDoneBtn:hover {
     background-color: #ffe4e6;
 }

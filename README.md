@@ -1,15 +1,15 @@
-# Full‑stack Todo（Vanilla JS + Express + SQLite）
+# Full‑stack Task Manager（Vanilla JS + Express + SQLite）
 
-Vanilla JSで作ったフロントと、Express + SQLiteのバックエンドをつないだ **フルスタックTodoアプリ**です。  
+Vanilla JSで作ったフロントと、Express + SQLiteのバックエンドをつないだ **フルスタックのタスク管理アプリ（Task Manager）**です。  
 **ログイン（Cookieセッション）**でユーザーを分離し、期限（日時）・カレンダー・定期予定・通知など「実際に使える」機能を段階的に実装しました。
 
 ## Demo
 - **URL**: `https://full-stack-todo-7aw9.onrender.com/`
 
 ### Screenshot
-![Todo app v2](assets/app-imagev2.png)
+![Task manager v2](assets/app-imagev2.png)
 
-![Todo calendar](assets/callenderi-mage.png)
+![Calendar view](assets/callenderi-mage.png)
 
 ---
 
@@ -17,9 +17,9 @@ Vanilla JSで作ったフロントと、Express + SQLiteのバックエンドを
 
 ### 認証・データ分離
 - **新規登録 / ログイン / ログアウト**
-- **ユーザーごとにTodoを分離**（他人のTodoは見えない/操作できない）
+- **ユーザーごとにタスクを分離**（他人のタスクは見えない/操作できない）
 
-### Todo管理
+### タスク管理
 - **作成/取得/更新/削除（CRUD）**
 - **完了切替**
 - **編集モーダル**でまとめて更新（タスク名/完了/日付/締め切り時刻/場所/種類）
@@ -36,7 +36,7 @@ Vanilla JSで作ったフロントと、Express + SQLiteのバックエンドを
 
 ### カレンダー・予定機能
 - **月カレンダー表示（前後月移動）**
-- 期限日のTodoを日付セルに表示（最大3件 + `+N件`）
+- 期限日のタスクを日付セルに表示（最大3件 + `+N件`）
 - **定期予定（毎週）を1年先まで自動追加**
   - シリーズ（1グループ）として扱い、一覧には **直近1件だけ**表示
   - **シリーズ一括削除**ボタンあり

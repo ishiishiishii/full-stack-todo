@@ -1,7 +1,7 @@
-# Full-stack Todo (Vanilla JS + Express + SQLite)
+# Full‑stack Todo（Vanilla JS + Express + SQLite）
 
-ブラウザで動くフロント（バニラJS）と、APIサーバ（Express）を分離し、SQLiteで永続化したTodoアプリです。
-フロントは `fetch` でAPIを呼び出し、サーバ（DB）を正（source of truth）としてCRUDを行います。
+Vanilla JSで作ったフロントと、Express + SQLiteのバックエンドをつないだ **フルスタックTodoアプリ**です。  
+**ログイン（Cookieセッション）**でユーザーを分離し、期限（日時）・カレンダー・定期予定・通知など「実際に使える」機能を段階的に実装しました。
 
 ## Demo
 - **URL**: `https://full-stack-todo-7aw9.onrender.com/`
@@ -11,66 +11,131 @@
 
 ![Todo calendar](assets/callenderi-mage.png)
 
-## What I built (機能)
-### Core
-- **Todo CRUD**（作成/取得/更新/削除）
-- **完了切替**（done）
-- **フィルタ**（全て/未完了/完了）
+---
 
-### UX
+## このアプリでできること（機能一覧）
+
+### 認証・データ分離
+- **新規登録 / ログイン / ログアウト**
+- **ユーザーごとにTodoを分離**（他人のTodoは見えない/操作できない）
+
+### Todo管理
+- **作成/取得/更新/削除（CRUD）**
+- **完了切替**
+- **編集モーダル**でまとめて更新（タスク名/完了/日付/締め切り時刻/場所/種類）
+- **残り日数表示**（今日 / 残りN日 / 期限切れN日）
+- **期限が近い順**で表示（並び順保存が無い場合）
+- **期限なし（あとで）**を専用エリアに分離表示
+
+### 使いやすさ（UX）
+- **検索**（タスク名/場所の部分一致）
+- **ドラッグ&ドロップ並び替え**（並び順をDBに保存）
 - **完了一括削除**
-- **残り件数表示**
-- **空状態メッセージ**
-- **Enterで追加**
+- **Enterで追加 / Shift+Enterで改行**（入力欄はtextarea自動伸縮）
+- **エクスポート/インポート（JSON）**
 
-## Architecture (全体構成)
+### カレンダー・予定機能
+- **月カレンダー表示（前後月移動）**
+- 期限日のTodoを日付セルに表示（最大3件 + `+N件`）
+- **定期予定（毎週）を1年先まで自動追加**
+  - シリーズ（1グループ）として扱い、一覧には **直近1件だけ**表示
+  - **シリーズ一括削除**ボタンあり
+
+### 天気（東京固定）
+- Open‑Meteoから取得して、カレンダーに **☀/☁/☔** を表示
+- **予報は最大16日先まで**のため、それ以降は **「？」（未定）**表示
+
+### 通知
+- ブラウザ通知（許可制）
+- **締め切りの1日前**に通知（次の7日以内だけスケジュール）
+
+---
+
+## 全体構成（Architecture）
+
 - **Frontend**: `Todo/vanilla-js-todo/`
-  - state → render でUIを一方向に更新
-  - API呼び出し後に再取得してUIを確実に同期（最初は正確性優先）
-- **Backend**: `backend/`
-  - ExpressでAPI（GET/POST/PATCH/DELETE）
-  - SQLite（`todos.db`）に永続保存（サーバ再起動でもデータが残る）
+  - `state（todos）→ render（DOM）` の一方向で管理
+  - `fetch` は `credentials: "include"` でセッションCookieを送信
+- **Backend**: `backend/server.js`
+  - ExpressでAPI + 静的配信（同一オリジン化）
+  - SQLite（better-sqlite3）で永続化
 
-## API (Endpoints)
-- `GET /health` : 疎通確認
-- `GET /todos` : Todo一覧
-- `POST /todos` : Todo追加
-  - body: `{ "text": "..." }`
-- `PATCH /todos/:id` : done切替
-- `DELETE /todos/:id` : Todo削除
+---
 
-## Highlights (工夫点 / アピール)
-- **フロントとバックエンドの分離**: UIロジックとデータ操作を分け、フルスタックの開発フロー（API設計→接続）を経験
-- **RESTっぽいCRUD設計**: GET/POST/PATCH/DELETEを揃え、拡張（認証・ユーザー分離）に繋げやすい形にした
-- **DB永続化**: メモリ配列→SQLiteへ移行し、再起動耐性を確保
-- **入力バリデーション**: 空白のみの入力を弾き、エラー（400）を返す
-- **デバッグ耐性**: `Cannot GET` / `MODULE_NOT_FOUND` / `http vs https` 等のエラーを切り分けながら改善
+## 工夫点 / 難しかった点（どう解決したか）
 
-## Tech Stack
-- **Frontend**: HTML / CSS / JavaScript（Vanilla）
-- **Backend**: Node.js / Express
-- **DB**: SQLite（better-sqlite3）
+### 1) 「ログイン状態」をフロントに安全に反映
+- **課題**: ログインフォームをTodo画面に同居させるとUXが崩れる。未ログイン時の状態も分かりにくい。
+- **解決**: `GET /me` でセッションを確認し、ヘッダー右上の `#authSlot` に状態（ログイン/ログアウト）を描画。
 
-## Local Setup (動かし方)
-### 1) Backend
+### 2) 期限日（DB）と表示（JS）の命名差
+- **課題**: DBは `due_at`（snake_case）、JSは `dueAt`（camelCase）で混乱しやすい。
+- **解決**: **DB⇔JSON変換層**を明示し、フロントは `dueAt` に統一。
+
+### 3) PATCHの互換維持（doneトグル → 編集APIへ拡張）
+- **課題**: 最初は `PATCH /todos/:id` を「doneトグル」だけにしていたが、後から編集もしたい。
+- **解決**: **body無しならトグル / bodyありなら更新**という互換仕様にして、段階的な拡張に耐える形に。
+
+### 4) 天気APIの仕様差・取得可能範囲の制約
+- **課題**: Forecast APIは未来が最大16日程度で、月末まで取ろうとすると400になる。`weathercode` と `weather_code` の差もある。
+- **解決**:
+  - 過去は archive API、未来は forecast APIでマージ
+  - 16日以降は「未定」表示にしてUXを崩さない
+
+### 5) 定期予定が増えすぎて一覧が崩壊する問題
+- **課題**: 1年先まで毎週追加すると、一覧が大量になり、操作性が落ちる。
+- **解決**:
+  - DBに `recurrence_id` を追加し「シリーズ化」
+  - 一覧は **直近1件のみ表示**
+  - 「定期を削除」でシリーズ一括削除
+
+---
+
+## API（主要エンドポイント）
+
+### Auth
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/logout`
+- `GET /me`
+
+### Todos
+- `GET /todos`
+- `POST /todos`
+- `PATCH /todos/:id`
+- `DELETE /todos/:id`
+- `POST /todos/reorder`
+- `POST /todos/bulk`
+- `DELETE /recurring/:recurrenceId`
+
+---
+
+## Local Setup（ローカルで動かす）
+
+### 1) インストール
+
 ```bash
-cd backend
 npm install
-node server.js
 ```
 
-確認:
-- `http://localhost:3001/health`
-- `http://localhost:3001/todos`
+### 2) 起動
 
-### 2) Frontend
-`Todo/vanilla-js-todo/index.html` をブラウザで開きます（APIサーバが起動している必要があります）。
+```bash
+npm run dev
+```
 
-## Notes
-- `backend/node_modules/` と `backend/*.db` はGit管理しません（`.gitignore`で除外）。
+### 3) アクセス
+- `http://localhost:3001/`
 
-## Future Work (次にやること)
-- **認証（ログイン）** + ユーザーごとのTodo分離（usersテーブル、`user_id`）
-- **デプロイ**（URLで触れる状態にする）
-- **テスト追加**（APIの基本動作）
-- **DB移行**（PostgreSQL等、実運用寄りの構成）
+---
+
+## セキュリティ/運用メモ（今後の伸びしろ）
+- セッションsecretを **環境変数**へ（今は学習用の固定値）
+- Cookieセッションの **CSRF対策**
+- レート制限（ログイン試行など）
+- APIテスト追加（回帰防止）
+
+---
+
+## ドキュメント
+- `docs/BUILD_GUIDE.md`（0から再現するための作り方）

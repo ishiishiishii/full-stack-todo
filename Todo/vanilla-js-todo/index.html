@@ -10,9 +10,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
+        <header class="site-header">
+            <div class="site-header-inner">
+                <a class="brand-link" href="./">Todo</a>
+                <div id="authSlot" class="auth-slot" aria-label="ログイン状態"></div>
+            </div>
+        </header>
+
         <main>
-            <input id="input">
-            <button id="btn">追加</button>
+            <p id="appStatus" class="app-status" role="status"></p>
+
+            <div class="composer">
+                <input id="input" placeholder="タスクを入力">
+                <div class="meta-row" aria-label="日時・時間・場所">
+                    <div class="field" data-label="日時">
+                        <input id="due" type="date" aria-label="締め切り日">
+                    </div>
+                    <div class="field field-time" data-label="時間">
+                        <input id="endTime" type="time" step="300" aria-label="締め切り時刻">
+                    </div>
+                    <input id="location" placeholder="場所（例: 図書館 / 3F教室）" aria-label="場所">
+                </div>
+                <button id="btn">追加</button>
+            </div>
             <!--完了数表示-->
             <div class="toolbar">
                 <span id="count"></span>
@@ -29,6 +49,64 @@
 
             <p id="emptyMessage">タスクがありません。追加してみましょう。</p>
             <ul id="list"></ul>
+
+            <section class="calendar" aria-label="カレンダー">
+                <div class="calendar-header">
+                    <div class="calendar-title">
+                        <span id="calTitle">カレンダー</span>
+                    </div>
+                    <div class="calendar-nav">
+                        <button id="calPrev" type="button" class="icon-button" aria-label="前の月">
+                            <span aria-hidden="true">‹</span>
+                        </button>
+                        <button id="calNext" type="button" class="icon-button" aria-label="次の月">
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="calendar-weekdays" aria-hidden="true">
+                    <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+                </div>
+                <div id="calGrid" class="calendar-grid" role="grid" aria-label="月カレンダー"></div>
+            </section>
         </main>
+
+        <div id="editOverlay" class="overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+            <div class="overlay-backdrop" data-close="true"></div>
+            <div class="modal-card" role="document">
+                <div class="modal-header">
+                    <div id="editTitle" class="modal-title">タスク編集</div>
+                    <button type="button" class="icon-button" id="editCloseBtn" aria-label="閉じる">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <label class="modal-label" for="editText">タスク名</label>
+                    <input id="editText" class="modal-input" type="text">
+
+                    <label class="modal-label" for="editDone">完了</label>
+                    <label class="modal-check">
+                        <input id="editDone" type="checkbox">
+                        <span>完了にする</span>
+                    </label>
+
+                    <label class="modal-label">日時</label>
+                    <div class="modal-row">
+                        <input id="editDue" class="modal-input" type="date" aria-label="締め切り日">
+                        <input id="editEndTime" class="modal-input" type="time" step="300" aria-label="締め切り時刻">
+                    </div>
+
+                    <label class="modal-label" for="editLocation">場所</label>
+                    <input id="editLocation" class="modal-input" type="text" placeholder="場所（空で解除）">
+                </div>
+
+                <div class="modal-actions">
+                    <button id="editSaveBtn" type="button" class="link-button primary">保存</button>
+                    <button id="editCancelBtn" type="button" class="link-button">キャンセル</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

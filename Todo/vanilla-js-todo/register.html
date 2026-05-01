@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>新規登録</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="js/auth-register.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand-link" href="./">Todo</a>
+        <nav class="site-header-actions" aria-label="アカウント">
+          <a class="link-button" href="./login.html">ログインへ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="page-title">新規登録</h1>
+
+      <p id="authPageStatus" class="app-status" role="status"></p>
+
+      <section class="auth-card" aria-label="新規登録フォーム">
+        <div class="auth-row">
+          <label class="auth-label" for="email">メール</label>
+          <input id="email" class="auth-input" type="email" autocomplete="username" />
+        </div>
+        <div class="auth-row">
+          <label class="auth-label" for="password">パスワード</label>
+          <input
+            id="password"
+            class="auth-input"
+            type="password"
+            autocomplete="new-password"
+          />
+        </div>
+        <div class="auth-actions">
+          <button id="submitBtn" type="button" class="primary">登録</button>
+          <a class="link-button" href="./">Todoへ戻る</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

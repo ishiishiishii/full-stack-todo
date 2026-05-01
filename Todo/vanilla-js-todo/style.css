@@ -7,9 +7,54 @@ body {
     color: #111827;
 }
 
+/* カード（main）の外：画面幅いっぱいのトップバー */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+}
+
+.site-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px clamp(16px, 4vw, 28px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.brand-link {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #111827;
+    text-decoration: none;
+}
+
+.brand-link:hover {
+    color: #4f46e5;
+}
+
+.brand-link:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.site-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 main {
     max-width: 720px;
-    margin: 48px auto;
+    margin: 24px auto 48px;
     padding: 20px;
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
@@ -17,13 +62,197 @@ main {
     box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
 }
 
-#input {
-    width: min(500px, 100%);
+.page-title {
+    margin: 0 0 8px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.auth-slot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.user-pill {
+    max-width: min(360px, 55vw);
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    background-color: #f9fafb;
+    color: #374151;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    color: #111827;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;
+}
+
+.link-button:hover {
+    background-color: #f9fafb;
+}
+
+.primary {
+    border-color: #4f46e5 !important;
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+}
+
+.primary:hover {
+    background-color: #4338ca !important;
+}
+
+.app-status {
+    margin: 0 0 10px;
+    color: #6b7280;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+.auth-card {
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background-color: #fafafa;
+}
+
+.auth-row {
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.auth-label {
+    color: #374151;
+    font-size: 14px;
+}
+
+.auth-input {
+    width: 100%;
     height: 40px;
     padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 10px;
     outline: none;
+    background-color: #ffffff;
+}
+
+.auth-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.auth-actions button {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.auth-actions button:hover {
+    background-color: #f9fafb;
+}
+
+.composer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "input btn"
+        "meta meta";
+    gap: 10px 12px;
+    margin: 12px 0 6px;
+    align-items: center;
+}
+
+.due-label,
+.loc-label {
+    display: none;
+}
+
+.meta-row {
+    grid-area: meta;
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr;
+    gap: 8px;
+    align-items: center;
+}
+
+.field {
+    position: relative;
+    min-width: 0;
+}
+
+.field::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #6b7280;
+    pointer-events: none;
+}
+
+#location {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    outline: none;
+    font-size: 15px;
+}
+
+#due {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px 8px 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 15px;
+}
+
+#endTime {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 10px 8px 44px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 15px;
+}
+
+#input {
+    grid-area: input;
+    width: 100%;
+    min-height: 48px;
+    padding: 14px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    outline: none;
+    font-size: 18px;
 }
 
 #input:focus {
@@ -31,14 +260,25 @@ main {
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
+#location:focus,
+#due:focus,
+#endTime:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    outline: none;
+}
+
 #btn {
-    margin-left: 8px;
-    padding: 10px 14px;
+    grid-area: btn;
+    width: auto;
+    margin-left: 0;
+    padding: 12px 14px;
     border: 1px solid #4f46e5;
-    border-radius: 10px;
+    border-radius: 12px;
     background-color: #4f46e5;
     color: #ffffff;
     cursor: pointer;
+    font-size: 16px;
 }
 
 #btn:hover {
@@ -60,6 +300,124 @@ main {
     border-bottom: 1px solid #eef2f7;
 }
 
+.todo-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.todo-main {
+    display: grid;
+    gap: 2px;
+    min-width: 0; /* ellipsisを効かせる */
+    flex: 1;
+}
+
+.todo-meta {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.overlay.is-hidden {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+}
+
+.overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.55);
+}
+
+.modal-card {
+    position: relative;
+    width: min(520px, 100%);
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 60px rgba(17, 24, 39, 0.25);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.modal-title {
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.modal-body {
+    padding: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.modal-label {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 700;
+}
+
+.modal-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 15px;
+}
+
+.modal-row {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 10px;
+}
+
+.modal-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fafafa;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 14px 14px;
+    border-top: 1px solid #eef2f7;
+}
+
+.todo-due {
+    color: #6b7280;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
 #list li:hover {
     background-color: #fafafa;
 }
@@ -70,7 +428,6 @@ main {
 }
 
 #list button {
-    margin-left: auto;
     padding: 8px 10px;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
@@ -141,20 +498,174 @@ main {
     color: #6b7280;
 }
 
+.calendar {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #eef2f7;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.calendar-title {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
+    color: #111827;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+    user-select: none;
+}
+
+.icon-button span {
+    font-size: 22px;
+    margin-top: -1px;
+}
+
+.icon-button:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.icon-button:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 3px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.calendar-weekdays > div {
+    text-align: center;
+    padding: 6px 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.calendar-cell {
+    min-height: 92px;
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    background-color: #ffffff;
+    padding: 8px;
+    overflow: hidden;
+}
+
+.calendar-cell.is-out {
+    background-color: #fbfbfd;
+    border-color: #f1f5f9;
+}
+
+.calendar-cell.is-today {
+    border-color: rgba(79, 70, 229, 0.55);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.calendar-cell-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.calendar-day {
+    font-weight: 700;
+    font-size: 14px;
+    color: #111827;
+}
+
+.calendar-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.calendar-item {
+    font-size: 12px;
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-item.is-done {
+    text-decoration: line-through;
+    opacity: 0.65;
+}
+
+.calendar-more {
+    color: #6b7280;
+}
+
 @media (max-width: 520px) {
     /*縦に入力ボタンと追加ボタンを並べる*/
     #input {
         width: 100%;
     }
 
-    #btn {
-        width: 100%;
-        margin-left: 0;
-        margin-top: 8px;
-    }
-
     /*フィルタは折り返しOKにする*/
     .filters {
         flex-wrap: wrap;
+    }
+
+    .auth-row {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-cell {
+        min-height: 84px;
+        padding: 7px;
+    }
+}
+
+@media (min-width: 640px) {
+    .composer {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "input btn"
+            "meta meta";
+        align-items: center;
+    }
+
+    #btn {
+        justify-self: end;
+    }
+
+    .meta-row {
+        grid-template-columns: 1fr 120px 1fr;
     }
 }

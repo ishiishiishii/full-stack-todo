@@ -4,6 +4,12 @@ backend/npm-debug.log*
 backend/yarn-debug.log*
 backend/yarn-error.log*
 
+# Node (project root)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # SQLite DB files (local data)
 backend/*.db
 backend/*.db-journal
@@ -15,8 +21,9 @@ backend/*.db-shm
 Thumbs.db
 .vscode/
 
-# Local docs (do not publish)
-docs/
+# Docs are part of this project (commit them)
+# (If you need private notes, put them under docs/_private/)
+docs/_private/
 
 # Keep portfolio repo clean (exclude unrelated practice folders/files)
 CSS/
@@ -32,6 +39,5 @@ video-tag.html
 videotag.mp4
 
 # Personal dev notes (not for public portfolio)
-PROGRESS.md
 PROMPT.md
 

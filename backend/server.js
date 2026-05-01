@@ -46,6 +46,18 @@ try {
     db.exec("ALTER TABLE todos ADD COLUMN end_time TEXT");
 } catch (e) {}
 
+try {
+    db.exec("ALTER TABLE todos ADD COLUMN sort_order INTEGER");
+} catch (e) {}
+
+try {
+    db.exec("ALTER TABLE todos ADD COLUMN category TEXT");
+} catch (e) {}
+
+try {
+    db.exec("ALTER TABLE todos ADD COLUMN recurrence_id TEXT");
+} catch (e) {}
+
 const app = express();
 
 app.use(express.json());
@@ -186,7 +198,7 @@ app.get("/todos", requireLogin, (req, res) => {
 
     const rows = db
         .prepare(
-            "SELECT id, text, done, due_at, location, start_time, end_time FROM todos WHERE user_id = ?"
+            "SELECT id, text, done, due_at, location, start_time, end_time, sort_order, category, recurrence_id FROM todos WHERE user_id = ? ORDER BY sort_order IS NULL, sort_order ASC, due_at IS NULL, due_at ASC, end_time IS NULL, end_time ASC, id ASC"
         )
         .all(userId);
     const todos = rows.map((r) => ({
@@ -197,9 +209,146 @@ app.get("/todos", requireLogin, (req, res) => {
         location: r.location ?? null,
         startTime: r.start_time ?? null,
         endTime: r.end_time ?? null,
+        sortOrder: r.sort_order ?? null,
+        category: r.category ?? null,
+        recurrenceId: r.recurrence_id ?? null,
     }));
 
     res.json(todos);
+});
+
+app.post("/todos/reorder", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const ids = req.body?.ids;
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: "ids array is required" });
+    }
+    if (!ids.every((x) => typeof x === "string")) {
+        return res.status(400).json({ error: "ids must be string array" });
+    }
+
+    const tx = db.transaction(() => {
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
+            db.prepare("UPDATE todos SET sort_order = ? WHERE id = ? AND user_id = ?").run(
+                i,
+                id,
+                userId
+            );
+        }
+    });
+
+    try {
+        tx();
+        return res.json({ ok: true });
+    } catch (e) {
+        return res.status(500).json({ error: "failed to reorder" });
+    }
+});
+
+app.delete("/recurring/:recurrenceId", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const recurrenceId = req.params.recurrenceId;
+    if (!recurrenceId || typeof recurrenceId !== "string") {
+        return res.status(400).json({ error: "recurrenceId is required" });
+    }
+
+    const info = db
+        .prepare("DELETE FROM todos WHERE user_id = ? AND recurrence_id = ?")
+        .run(userId, recurrenceId);
+
+    return res.json({ ok: true, deleted: info.changes });
+});
+
+app.post("/todos/bulk", requireLogin, (req, res) => {
+    const userId = req.session.userId;
+    const items = req.body?.items;
+    if (!Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: "items array is required" });
+    }
+
+    const nowIso = new Date().toISOString();
+    const insert = db.prepare(
+        "INSERT INTO todos (id, user_id, text, done, due_at, location, start_time, end_time, sort_order, category, recurrence_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    const getMax = db
+        .prepare("SELECT COALESCE(MAX(sort_order), -1) AS m FROM todos WHERE user_id = ?")
+        .get(userId);
+    let nextOrder = Number(getMax?.m ?? -1) + 1;
+
+    const tx = db.transaction(() => {
+        for (const raw of items) {
+            const text = raw?.text;
+            if (!text || typeof text !== "string" || text.trim() === "") {
+                throw new Error("text is required");
+            }
+
+            const dueAtRaw = raw?.dueAt;
+            let dueAt = null;
+            if (dueAtRaw !== undefined && dueAtRaw !== null && dueAtRaw !== "") {
+                if (typeof dueAtRaw !== "string") throw new Error("dueAt must be YYYY-MM-DD");
+                const s = dueAtRaw.trim();
+                if (s !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(s)) throw new Error("dueAt must be YYYY-MM-DD");
+                dueAt = s === "" ? null : s;
+            }
+
+            const locationRaw = raw?.location;
+            let location = null;
+            if (locationRaw !== undefined && locationRaw !== null && locationRaw !== "") {
+                if (typeof locationRaw !== "string") throw new Error("location must be string");
+                const s = locationRaw.trim();
+                location = s === "" ? null : s;
+            }
+
+            const endTimeRaw = raw?.endTime;
+            let endTime = null;
+            if (endTimeRaw !== undefined && endTimeRaw !== null && endTimeRaw !== "") {
+                if (typeof endTimeRaw !== "string") throw new Error("endTime must be HH:MM");
+                const s = endTimeRaw.trim();
+                if (!/^\d{2}:\d{2}$/.test(s)) throw new Error("endTime must be HH:MM");
+                endTime = s;
+            }
+
+            const categoryRaw = raw?.category;
+            let category = null;
+            if (categoryRaw !== undefined && categoryRaw !== null && categoryRaw !== "") {
+                if (typeof categoryRaw !== "string") throw new Error("category must be string");
+                const s = categoryRaw.trim();
+                category = s === "" ? null : s;
+            }
+
+            const recurrenceIdRaw = raw?.recurrenceId;
+            let recurrenceId = null;
+            if (recurrenceIdRaw !== undefined && recurrenceIdRaw !== null && recurrenceIdRaw !== "") {
+                if (typeof recurrenceIdRaw !== "string") throw new Error("recurrenceId must be string");
+                const s = recurrenceIdRaw.trim();
+                recurrenceId = s === "" ? null : s;
+            }
+
+            const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            insert.run(
+                id,
+                userId,
+                text.trim(),
+                0,
+                dueAt,
+                location,
+                null,
+                endTime,
+                nextOrder++,
+                category,
+                recurrenceId
+            );
+        }
+    });
+
+    try {
+        tx();
+        return res.status(201).json({ ok: true, created: items.length, createdAt: nowIso });
+    } catch (e) {
+        return res.status(400).json({ error: String(e.message ?? e) });
+    }
 });
 
 app.post("/todos", requireLogin,(req, res) => {
@@ -207,6 +356,8 @@ app.post("/todos", requireLogin,(req, res) => {
     const locationRaw = req.body?.location;
     const startTimeRaw = req.body?.startTime;
     const endTimeRaw = req.body?.endTime;
+    const categoryRaw = req.body?.category;
+    const recurrenceIdRaw = req.body?.recurrenceId;
 
     let dueAt = null;
     if (dueAtRaw !== undefined && dueAtRaw !== null && dueAtRaw !== "") {
@@ -228,6 +379,24 @@ app.post("/todos", requireLogin,(req, res) => {
         }
         const s = locationRaw.trim();
         location = s === "" ? null : s;
+    }
+
+    let category = null;
+    if (categoryRaw !== undefined && categoryRaw !== null && categoryRaw !== "") {
+        if (typeof categoryRaw !== "string") {
+            return res.status(400).json({ error: "category must be a string" });
+        }
+        const s = categoryRaw.trim();
+        category = s === "" ? null : s;
+    }
+
+    let recurrenceId = null;
+    if (recurrenceIdRaw !== undefined && recurrenceIdRaw !== null && recurrenceIdRaw !== "") {
+        if (typeof recurrenceIdRaw !== "string") {
+            return res.status(400).json({ error: "recurrenceId must be a string" });
+        }
+        const s = recurrenceIdRaw.trim();
+        recurrenceId = s === "" ? null : s;
     }
 
     function normalizeTime(raw, fieldName) {
@@ -271,10 +440,12 @@ app.post("/todos", requireLogin,(req, res) => {
         location,
         startTime: startTimeNormalized ?? null,
         endTime: endTimeNormalized ?? null,
+        category,
+        recurrenceId,
     };
 
     db.prepare(
-        "INSERT INTO todos (id, user_id, text, done, due_at, location, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        "INSERT INTO todos (id, user_id, text, done, due_at, location, start_time, end_time, category, recurrence_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     ).run(
         newTodo.id,
         userId,
@@ -283,7 +454,9 @@ app.post("/todos", requireLogin,(req, res) => {
         dueAt,
         location,
         startTimeNormalized ?? null,
-        endTimeNormalized ?? null
+        endTimeNormalized ?? null,
+        category,
+        recurrenceId
     );   
 
     res.status(201).json(newTodo);
@@ -312,6 +485,7 @@ app.patch("/todos/:id", requireLogin, (req, res) => {
             req.body.location !== undefined ||
             req.body.startTime !== undefined ||
             req.body.endTime !== undefined ||
+            req.body.category !== undefined ||
             req.body.done !== undefined);
 
     // 互換: body無し/空なら done をトグル（既存の挙動）
@@ -377,6 +551,19 @@ app.patch("/todos/:id", requireLogin, (req, res) => {
         }
     }
 
+    let nextCategory = row.category ?? null;
+    if (patch.category !== undefined) {
+        const raw = patch.category;
+        if (raw === null || raw === "") {
+            nextCategory = null;
+        } else if (typeof raw !== "string") {
+            return res.status(400).json({ error: "category must be a string or null" });
+        } else {
+            const s = raw.trim();
+            nextCategory = s === "" ? null : s;
+        }
+    }
+
     function normalizeTimeOrNull(raw, fieldName) {
         if (raw === undefined) return undefined;
         if (raw === null || raw === "") return null;
@@ -416,7 +603,7 @@ app.patch("/todos/:id", requireLogin, (req, res) => {
     }
 
     db.prepare(
-        "UPDATE todos SET text = ?, done = ?, due_at = ?, location = ?, start_time = ?, end_time = ? WHERE id = ? AND user_id = ?"
+        "UPDATE todos SET text = ?, done = ?, due_at = ?, location = ?, start_time = ?, end_time = ?, category = ? WHERE id = ? AND user_id = ?"
     ).run(
         nextText,
         nextDone ? 1 : 0,
@@ -424,6 +611,7 @@ app.patch("/todos/:id", requireLogin, (req, res) => {
         nextLocation,
         nextStartTime,
         nextEndTime,
+        nextCategory,
         id,
         userId
     );
@@ -436,6 +624,7 @@ app.patch("/todos/:id", requireLogin, (req, res) => {
         location: nextLocation,
         startTime: nextStartTime,
         endTime: nextEndTime,
+        category: nextCategory,
     });
   });
 
